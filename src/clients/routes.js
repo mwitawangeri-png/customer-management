@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/middleware');
+const protect = require('../middleware/middleware');
+const {createClient} = require('./controller');
 
-router.post('/', auth, /*create client*/);
+router.post('/', protect, createClient);
+
+module.exports = router;
