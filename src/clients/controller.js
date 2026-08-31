@@ -5,11 +5,11 @@ const createClient = async (req, res) => {
     const {firstName, lastName, email} = req.body;
     const userId = req.user.id;
 
-    if (!userId || !email || !firstName){ 
-       return res.status(400).json({message: "Missing user, oe email or name"})}
+    if (!email || !firstName){ 
+       return res.status(400).json({message: "Missing required client fields"})}
 
     try{
-        
+
         const client = await prisma.client.create({
             data:{
                 firstName: firstName,
