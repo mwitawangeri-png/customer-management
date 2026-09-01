@@ -17,7 +17,7 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   clients      Client[]
-  projects     project[]
+  projects     Project[]
 }
 
 model Client {
