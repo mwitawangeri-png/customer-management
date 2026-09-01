@@ -17,6 +17,7 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   clients      Client[]
+  projects     project[]
 }
 
 model Client {
@@ -44,6 +45,9 @@ model Project {
   
   clientId    String
   client      Client    @relation(fields: [clientId], references: [id])
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
   quotes      Quote[]
 }
 
