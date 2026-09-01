@@ -99,28 +99,31 @@ const createProject = async (req, res) => {
         const client = await prisma.client.findFirst({ //check if client exists
 
             where: {
-                clientId: clientId
-            }
-        });
-
-        if (!client){ return res.status(400).json({message: "Client does not exist"})}
-
-        const project = prisma.project.create({
-            data:{
-                title: title,
-                description: description,
+                id: clientId,
                 userId: user
             },
         });
 
-        return res.json(201).status({message: "Project created successfully!",
+        if (!client){ return res.status(400).json({message: "Client not found or unauthorized"})}
+
+        const project = await prisma.project.create({
+
+            data:{
+                title: title,
+                description: description,
+                clientId: clientId,
+                userId: user
+            },
+        });
+
+        return res.status(201).json({message: "Project created successfully!",
             data: project
         });
 
     }catch(error){
 
         console.error("Failed to create project", error);
-        res.status(500).json({message: "Failed to create project"})
+        res.status(500).json({message: "Internal server error"})
     }
 };
 
