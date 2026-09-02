@@ -61,7 +61,6 @@ const loginUser = async (req,res) => { // receive data from body
             },
         });
 
-        console.log(user);
 
         if (!user){ return res.status(401).json({message: "Invalid credentials"})}
 

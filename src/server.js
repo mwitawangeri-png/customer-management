@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const authRouter = require('./auth/auth');
 const clientRouter = require('./clients/routes');
+const project = require('./projects/routes');
 
 const app = express();
 const port = process.env.PORT;
@@ -10,6 +11,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use('/api/v1/auth', authRouter); // Mount auth router to app
 app.use('/api/v1/clients', clientRouter);
+app.use('/api/v1/projects', project);
 
 app.listen(port, () => {
   console.log(`CRM Backend is live and listening on port ${port}`);
