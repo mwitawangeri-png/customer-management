@@ -1,20 +1,5 @@
 const puppeteer = require('puppeteer');
-const multer = require('multer');
 
-const allowedMimeTypes = [
-
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/pdf'
-];
-
-const fileFilter = (req, file, cb) =>{
-    if (allowedMimeTypes.includes(file.mimetype)) {
-      cb(null, true);  
-    }
-
-}
 const generateProjectQuote = async (req, res) => {
 
     let browser;
@@ -54,4 +39,27 @@ const generateProjectQuote = async (req, res) => {
     }
 }
 
-module.exports = { generateProjectQuote };
+const uploadFile = async (req, res) => {
+    try {
+        const file = req.file;
+
+        // 1. Early return if Multer rejected the file or none was provided
+        if (!file) {
+            return res.status(400).json({
+                message: "Failed to upload file. Ensure it is a valid format and under 5MB."
+            });
+        }
+
+        // 2. Return success and the file details (so we can save the path to the DB later)
+        return res.status(201).json({
+            message: "File uploaded successfully",
+            fileName: file.originalname,
+            filePath: file.filename 
+        });
+
+    } catch (error) {
+        console.error("Failed to upload file", error);
+        return res.status(500).json({ message: "Internal server error during upload" });
+    }
+};
+module.exports = { generateProjectQuote, uploadFile };
