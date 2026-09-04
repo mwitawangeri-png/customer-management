@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const prisma = require('../config/db');
 
 const generateProjectQuote = async (req, res) => {
 
@@ -40,8 +41,10 @@ const generateProjectQuote = async (req, res) => {
 }
 
 const uploadFile = async (req, res) => {
+
     try {
         const file = req.file;
+        const project = req.params.id;
 
         // 1. Early return if Multer rejected the file or none was provided
         if (!file) {
@@ -50,11 +53,20 @@ const uploadFile = async (req, res) => {
             });
         }
 
+        const document = await prisma.document.create({
+
+            data: {
+            filePath: file.filename,
+            fileType: file.mimetype,
+            projectId: project
+            }
+
+        }); 
+
         // 2. Return success and the file details (so we can save the path to the DB later)
         return res.status(201).json({
             message: "File uploaded successfully",
-            fileName: file.originalname,
-            filePath: file.filename 
+            file: document
         });
 
     } catch (error) {
