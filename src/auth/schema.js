@@ -7,4 +7,8 @@ const signupSchema = z.object({
     firstName: nameSchema
 })
 
-module.exports = {signupSchema};
+const loginSchema = z.object({
+    email: emailSchema,
+})
+
+module.exports = {signupSchema, loginSchema};
