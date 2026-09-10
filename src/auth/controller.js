@@ -13,6 +13,8 @@ const registerUser = async (req, res) => { //register a new user
             return res.status(400).json({message: 'All fields are required'});
         }
 
+        
+
         // Check that the user doesn't already exist
         const userExists = await prisma.user.findUnique({
 
