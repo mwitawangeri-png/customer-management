@@ -8,7 +8,6 @@ const validate = (schema) => {
             next();
         }
         catch(error){
-            console.error(error)
             const formattedErrors = error.flatten().fieldErrors;
             return res.status(400).json({message: "Validation failed",
                 errors: formattedErrors

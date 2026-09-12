@@ -5,7 +5,7 @@ const {createClient, getClients, deleteClient, createProject} = require('./contr
 const {createClientSchema} = require('./schema');
 const validate = require('../middleware/validate');
 
-router.post('/',validate(createClientSchema), protect, createClient);
+router.post('/',protect, validate(createClientSchema), createClient);
 router.get('/', protect, getClients);
 router.delete('/:id', protect, deleteClient);
 router.post('/:id/projects', protect, createProject);

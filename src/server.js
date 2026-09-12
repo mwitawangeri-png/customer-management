@@ -31,6 +31,10 @@ app.use('/', chatRouter);
 
 initChatSocket(io, jwtservice);
 
-server.listen(port, () => {
-  console.log(`CRM Backend is live and listening on port ${port}`);
-});
+if (process.env.NODE_ENV !== 'test'){
+  server.listen(port, () => {
+    console.log(`CRM Backend is live and listening on port ${port}`);
+  });
+}
+
+module.exports = app;
