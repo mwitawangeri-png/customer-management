@@ -21,7 +21,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "test": "jest",
+    "test": "set NODE_ENV=test&& jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "start": "node src/server.js",

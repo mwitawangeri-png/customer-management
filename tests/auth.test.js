@@ -2,6 +2,8 @@ const supertest = require('supertest');
 jest.mock('puppeteer', () => ({
     launch: jest.fn()
 }));
+
+const prisma = require('../src/config/db')
 const app = require('../src/server');
 
 describe('Register User tests', () => {
@@ -43,5 +45,15 @@ describe('Register User tests', () => {
         expect(response.status).toBe(400);
     });
 
+    afterAll(async () => {
+
+        await prisma.user.deleteMany({
+            where:{
+                email: {contains: '@testmail.com'}
+            }
+        });
+
+        await prisma.$disconnect();
+    });
     // End of describe
 });
