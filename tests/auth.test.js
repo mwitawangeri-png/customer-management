@@ -5,6 +5,7 @@ jest.mock('puppeteer', () => ({
 
 const prisma = require('../src/config/db')
 const app = require('../src/server');
+const bcrypt = require('bcrypt');
 
 describe('Register User tests', () => {
     test('successful registration to return a 201', async () => {
@@ -55,5 +56,68 @@ describe('Register User tests', () => {
 
         await prisma.$disconnect();
     });
-    // End of describe
+    // End of describe - registration
+});
+
+describe('Log user in tests', () => {
+
+        const rawPassword = 'SecurePassword123!';
+        const initEmail = 'login.test@testmail.com';
+  
+    beforeAll(async () => {
+
+        const passwordHash = await bcrypt.hash(rawPassword, 10);
+
+        await prisma.user.create({
+            data:{
+                firstName: "Login",
+                email: initEmail,
+                passwordHash: passwordHash
+            }
+        });
+    });
+
+    test('successful login returns a 200 and a token', async () => {
+
+        const response = await supertest(app)
+        .post('/api/v1/auth/login')
+        .send({email: initEmail, password: rawPassword});
+
+        expect(response.status).toBe(200);
+        expect(response.body.token).toBeDefined();
+
+    });
+
+    const malformedPayloads =[
+        {
+            email: "",
+            password: rawPassword
+        },
+        {
+            email: initEmail,
+            password: ""
+        }
+    ]
+
+    test.each(malformedPayloads)('Require validation, return a 400 error', async (payload) => {
+        
+        const response = await supertest(app)
+        .post('/api/v1/auth/login')
+        .send(payload);
+
+        expect(response.status).toBe(400);
+    });
+
+    afterAll( async () => {
+        await prisma.user.deleteMany({
+            where: {
+                email: {contains: '@testmail.com'}
+            }
+        });
+
+       await prisma.$disconnect();
+    });
+
+
+    // End of describe - login
 });

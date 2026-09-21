@@ -52,7 +52,12 @@ const loginUser = async (req,res) => { // receive data from body
 
     try{
         
-        console.log( email + "......" + password);
+        if(!email || !password){
+            return res.status(400).json({
+                message: "Missing password or email"
+            })
+        }
+
         const user = await prisma.user.findUnique({ // check if email exists in db
 
             where: {
