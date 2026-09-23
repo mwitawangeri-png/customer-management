@@ -11,37 +11,87 @@ const bcrypt = require('bcrypt');
 
 describe('Happy Path Client Endpoints tests', () => {
 
+    let authToken;
+    let globalUser;
+
+    const userPayload = {
+        email: `testuser+${Date.now()}@testmailclient.com`,
+        password: '123StrongPassword#'
+    };
+
+    const clientEmail = `testclient+${Date.now()}@testmailclient.com`
+
     beforeAll(async () => {
         // Create a user then log them in to get a jwt token
-        const userPayload = {
-            email: `testuser+${Date.now()}@testmail.com`,
-            password: '123StrongPassword#'
-        };
-
         const passwordHash = await bcrypt.hash(userPayload.password, 10);
 
-        await prisma.user.create({
+        globalUser = await prisma.user.create({
             data: {
                 email: userPayload.email,
-                passwordHash //
+                firstName: 'TestUser',
+                passwordHash
             }
         });
+
+        authToken = jwt.sign({id: globalUser.id}, process.env.JWT_SECRET, {expiresIn: '1h'});
         
     });
-    test('Create Client return 201 success code', () => {
+    test('Create Client return 201 success code', async () => {
+
+        const response = await supertest(app)
+        .post('/api/v1/clients')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({firstName: 'TestClient1', email: `${clientEmail}`});
+
+        expect(response.status).toBe(201);
+        expect(response.body.client.email).toBe(`${clientEmail}`);
 
     });
 
-    test('Get Clients return 200 success code', () => {
+    test('Get Clients return 200 success code', async () => {
+
+        const response = await supertest(app)
+        .get('/api/v1/clients')
+        .set('Authorization', `Bearer ${authToken}`)
+
+        expect(response.status).toBe(200);
+        expect(response.body.clients).toBeDefined();
 
     });
 
-    test('create project return 201 success code', () => {
+    test('delete client return 200 sucess code', async () => {
+
+        const client = await prisma.client.findFirst({
+            where: {
+                email: `${clientEmail}`
+            }
+        });
+
+        const response = await supertest(app)
+        .delete(`/api/v1/clients/${client.id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({userId: globalUser.id, clientId: client.id})
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBeDefined();
 
     });
 
-    test('delete client return 200 sucess code', () => {
+    afterAll(async () => {
 
+        await prisma.client.deleteMany({
+            where:{
+                email: {contains: '@testmailclient'},
+            }
+        });
+
+        await prisma.user.deleteMany({
+            where:{
+                email: {contains: '@testmailclient'}
+            }
+        });
+
+        prisma.$disconnect();
     });
 
     // End of describe

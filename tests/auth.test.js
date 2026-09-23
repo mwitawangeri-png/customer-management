@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 describe('Register User tests', () => {
     test('successful registration to return a 201', async () => {
 
-        const email = `test.emailx${Date.now()}@testmail.com`
+        const email = `test.emailx${Date.now()}@testmailauth.com`
         const payload = {
             email: email,
             password: "Fd43#dhshd",
@@ -28,12 +28,12 @@ describe('Register User tests', () => {
             {   
                 password: "123456789",
                 firstName: "Demo User",
-                email: "test.email@testmail.com" 
+                email: "test.email@testmailauth.com" 
             }, //password schema violaton
             {
                 password: "Fd43#dhshd",
                 firstName: "", // Empty name
-                email: "test.email@testmail.com"
+                email: "test.email@testmailauth.com"
             }
         ];
 
@@ -50,7 +50,7 @@ describe('Register User tests', () => {
 
         await prisma.user.deleteMany({
             where:{
-                email: {contains: '@testmail.com'}
+                email: {contains: '@testmailauth.com'}
             }
         });
 
@@ -62,7 +62,7 @@ describe('Register User tests', () => {
 describe('Log user in tests', () => {
 
         const rawPassword = 'SecurePassword123!';
-        const initEmail = 'login.test@testmail.com';
+        const initEmail = 'login.test@testmailauth.com';
   
     beforeAll(async () => {
 
@@ -111,7 +111,7 @@ describe('Log user in tests', () => {
     afterAll( async () => {
         await prisma.user.deleteMany({
             where: {
-                email: {contains: '@testmail.com'}
+                email: {contains: '@testmailauth.com'}
             }
         });
 
