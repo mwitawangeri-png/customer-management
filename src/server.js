@@ -3,9 +3,30 @@ const {createServer} = require('node:http');
 const {Server} = require('socket.io');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-
+const helmet = require('helmet');
+const cors = require('cors');
 
 const app = express();
+
+//apply CORS
+app.use(helmet());
+const allowedOrgins = process.env.ALLOWED_ORIGINS? process.env.ALLOWED_ORIGINS.split(','):['http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+
+      if (!origin || allowedOrgins.includes(origin)) {
+        callback(null,true);
+      } else{
+        callback(new Error('CORS policy violation: Origin not allowed'));
+      }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+
+}));
+
 const server = createServer(app);
 const io = new Server(server,{
   cors: {origin: "*"}
