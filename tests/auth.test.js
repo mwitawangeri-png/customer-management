@@ -108,6 +108,28 @@ describe('Log user in tests', () => {
         expect(response.status).toBe(400);
     });
 
+    // Test login rate limiting
+    test('Rate limiter blocks requests after 10 requests',  async () => {
+
+        for ( let i=0; i < 4; i++ ){
+            console.log(`email:${initEmail},\npassword:${rawPassword} `)
+            const response = await supertest(app)
+            .post('/api/v1/auth/login')
+            .send({email: initEmail, password: rawPassword});
+    
+            console.log(response.status);
+            expect(response.status).not.toBe(429);
+        }
+
+        const blockedResponse = await supertest(app)
+        .post('/api/v1/auth/login')
+        .send({email: initEmail, password: rawPassword});
+
+        expect(blockedResponse.status).toBe(429);
+        expect(blockedResponse.body.error).toBe('Too many authentication attempts, please try again later')
+
+    })
+
     afterAll( async () => {
         await prisma.user.deleteMany({
             where: {
