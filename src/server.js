@@ -10,12 +10,12 @@ const app = express();
 
 //apply CORS
 app.use(helmet());
-const allowedOrgins = process.env.ALLOWED_ORIGINS? process.env.ALLOWED_ORIGINS.split(','):['http://localhost:3000'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS? process.env.ALLOWED_ORIGINS.split(','):['http://localhost:3000'];
 
 app.use(cors({
   origin: (origin, callback) => {
 
-      if (!origin || allowedOrgins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null,true);
       } else{
         callback(new Error('CORS policy violation: Origin not allowed'));
@@ -29,7 +29,7 @@ app.use(cors({
 
 const server = createServer(app);
 const io = new Server(server,{
-  cors: {origin: "*"}
+  cors: {origin: allowedOrigins}
 });
 
 const jwtservice = {

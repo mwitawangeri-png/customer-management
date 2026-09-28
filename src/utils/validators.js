@@ -3,7 +3,6 @@ const {z} = require('zod');
 
 const passwordSchema = z.string()
     .min(8, {message: "Password must be at least 8 characters long"
-
     })
     .refine((val) => /[A-Z]/.test(val),{
         message: "Password must contain at least one upper case letter."

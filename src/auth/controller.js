@@ -51,7 +51,7 @@ const loginUser = async (req,res) => { // receive data from body
     const {email, password} = req.body;
 
     try{
-        
+
         if(!email || !password){
             return res.status(400).json({
                 message: "Missing password or email"
