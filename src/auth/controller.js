@@ -72,7 +72,7 @@ const loginUser = async (req,res) => { // receive data from body
 
         if (!user){ return res.status(401).json({message: "Invalid credentials"})}
 
-        const match = await bcrypt.compare(password, user.passwordHash); // compare password hash
+        const match =  bcrypt.compare(password, user.passwordHash); // compare password hash
         
         if(!match){ return res.status(401).json({message: "Invalid credentials"})}
 
